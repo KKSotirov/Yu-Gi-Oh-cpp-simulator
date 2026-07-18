@@ -1,0 +1,14 @@
+# Compiled object files
+*.o
+*.out
+*.exe
+*.dSYM
+
+# IDE settings
+.vscode/
+.idea/
+.DS_Store
+
+# Build artifacts
+bin/
+build/
