@@ -202,13 +202,13 @@ public:
     {
         this->defense = newdefense;
     }
-    const MonsterAttribute getMonsterAttribute() {
+    MonsterAttribute getMonsterAttribute() {
         return this->attribute;
     }
     void setMonsterAttribute (const MonsterAttribute newAttribute) {
         this->attribute = newAttribute;
     }
-    const MonsterType getMonsterType() {
+    MonsterType getMonsterType() {
         return this->type;
     }
     void setMonsterType (const MonsterType newType) {
@@ -336,8 +336,10 @@ public:
 
 class DuelBoard
 {
+    public:
+    static constexpr int MAX_MONSTER_AND_BACKROW_ZONES = 5;
 private:
-    MonsterCard *monsterZones[5];
+    MonsterCard *monsterZones[MAX_MONSTER_AND_BACKROW_ZONES];
     Card *backrowZones[5]; // CAN BE SPELL OR TRAP OR PEN
     Card **Graveyard;
     int count;
@@ -347,7 +349,7 @@ private:
     // Release all dynamically allocated resources
     void free()
     {
-        for (size_t i = 0; i < 5; i++)
+        for (size_t i = 0; i < MAX_MONSTER_AND_BACKROW_ZONES; i++)
         {
             delete monsterZones[i];
             delete backrowZones[i];
@@ -389,7 +391,7 @@ private:
         {
             this->Graveyard[i] = other.Graveyard[i]->clone(); // Deep copy using polymorphic clone
         }
-        for (size_t i = 0; i < 5; i++)
+        for (size_t i = 0; i < MAX_MONSTER_AND_BACKROW_ZONES; i++)
         {
             this->monsterZones[i] = other.monsterZones[i] ? other.monsterZones[i]->clone() : nullptr;
             this->backrowZones[i] = other.backrowZones[i] ? other.backrowZones[i]->clone() : nullptr;
@@ -402,17 +404,17 @@ public:
     DuelBoard() : count(0), capacity(2), fieldSpell(nullptr)
     {
         Graveyard = new Card *[capacity]; // Initial graveyard allocation
-        for (size_t i = 0; i < 5; i++)
+        for (size_t i = 0; i < MAX_MONSTER_AND_BACKROW_ZONES; i++)
         {
             this->monsterZones[i] = nullptr;
             this->backrowZones[i] = nullptr;
         }
     }
     // Par Constructor
-    DuelBoard(const int otherCount, const int otherCapacity, const MonsterCard *otherMonsterZones[5], const Card *otherBackrowZones[5], const Card **otherGraveyard, const SpellCard* newFieldSpell) : count(otherCount), capacity(otherCapacity)
+    DuelBoard(const int otherCount, const int otherCapacity, const MonsterCard *otherMonsterZones[MAX_MONSTER_AND_BACKROW_ZONES], const Card *otherBackrowZones[MAX_MONSTER_AND_BACKROW_ZONES], const Card **otherGraveyard, const SpellCard* newFieldSpell) : count(otherCount), capacity(otherCapacity)
     {
         // Allocate and clone to ensure deep copy
-        for (size_t i = 0; i < 5; i++)
+        for (size_t i = 0; i < MAX_MONSTER_AND_BACKROW_ZONES; i++)
         {
             this->monsterZones[i] = otherMonsterZones[i] ? otherMonsterZones[i]->clone() : nullptr;
             this->backrowZones[i] = otherBackrowZones[i] ? otherBackrowZones[i]->clone() : nullptr;
@@ -457,7 +459,7 @@ public:
             std::cin >> penUse;
             if (penUse == 'm')
             {
-                for (size_t i = 0; i < 5; i++)
+                for (size_t i = 0; i < MAX_MONSTER_AND_BACKROW_ZONES; i++)
                 {
                     if (monsterZones[i] == nullptr)
                     {
@@ -486,7 +488,7 @@ public:
         // Cast to check if it's a monster and perform deep copy into zone
         if (MonsterCard *mon = dynamic_cast<MonsterCard *>(card))
         {
-            for (size_t i = 0; i < 5; i++)
+            for (size_t i = 0; i < MAX_MONSTER_AND_BACKROW_ZONES; i++)
             {
                 if (monsterZones[i] == nullptr)
                 {
@@ -511,7 +513,7 @@ public:
             }
             if (spell->getType() == SpellType::Continuous || spell->getType() == SpellType::Equip)
             {
-                for (size_t i = 0; i < 5; i++)
+                for (size_t i = 0; i < MAX_MONSTER_AND_BACKROW_ZONES; i++)
                 {
                     if (backrowZones[i] == nullptr)
                     {
@@ -536,7 +538,7 @@ public:
         {
             if (trap->getType() == TrapType::Continuous)
             {
-                for (size_t i = 0; i < 5; i++)
+                for (size_t i = 0; i < MAX_MONSTER_AND_BACKROW_ZONES; i++)
                 {
                     if (backrowZones[i] == nullptr)
                     {
