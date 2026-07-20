@@ -64,6 +64,34 @@ void printTrapType(TrapType trapType)
     }
     std::cout << std::endl;
 }
+
+enum class MonsterAttribute {
+    DARK,
+    LIGHT,
+    EARTH,
+    WATER,
+    FIRE,
+    WIND,
+    DIVINE
+};
+
+enum class MonsterType {
+    AQUA,
+    BEAST,
+    BEAST_WARRIOR,
+    DINOSAUR,
+    DIVINE_BEAST,
+    DRAGON,
+    FAIRY,
+    FIEND,
+    MACHINE,
+    SPELLCASTER,
+    THUNDER,
+    WARRIOR,
+    WYRM,
+    REPTILE
+};
+
 class Card
 {
 private:
@@ -150,12 +178,13 @@ class MonsterCard : virtual public Card
 private:
     int attack;
     int defense;
-
+    MonsterAttribute attribute;
+    MonsterType type;
 public:
     // Default constructor
-    MonsterCard() : Card(), attack(0), defense(0) {}
+    MonsterCard() : Card(), attack(0), defense(0), attribute(MonsterAttribute::EARTH), type(MonsterType::WARRIOR) {}
     // Par constructor
-    MonsterCard(const int newAttack, const int newDefense, const char *cardName, const char *cardEffect) : Card(cardName, cardEffect), attack(newAttack), defense(newDefense) {}
+    MonsterCard(const int newAttack, const int newDefense, const char *cardName, const char *cardEffect, const MonsterAttribute newAttribute, const MonsterType newType) : Card(cardName, cardEffect), attack(newAttack), defense(newDefense), attribute(newAttribute), type(newType) {}
     // NO dyn mem ~~> no ro3
     int getAttack() const
     {
@@ -172,6 +201,18 @@ public:
     void setDefense(const int newdefense)
     {
         this->defense = newdefense;
+    }
+    const MonsterAttribute getMonsterAttribute() {
+        return this->attribute;
+    }
+    void setMonsterAttribute (const MonsterAttribute newAttribute) {
+        this->attribute = newAttribute;
+    }
+    const MonsterType getMonsterType() {
+        return this->type;
+    }
+    void setMonsterType (const MonsterType newType) {
+        this->type = newType;
     }
 
     // Virtual functions
@@ -271,7 +312,7 @@ public:
     // Def constructor
     PendulumCard() : Card(), MonsterCard(), SpellCard(), pendulumScale(1) {}
     // Par constructor
-    PendulumCard(const int penScale, const int penAttack, const int penDeff, const char *penName, const char *penEffect) : Card(penName, penEffect), MonsterCard(penAttack, penDeff, penName, penEffect), SpellCard(SpellType::Continuous, penName, penEffect)
+    PendulumCard(const int penScale, const int penAttack, const int penDeff, const char *penName, const char *penEffect, const MonsterAttribute attribute, const MonsterType type) : Card(penName, penEffect), MonsterCard(penAttack, penDeff, penName, penEffect, attribute, type), SpellCard(SpellType::Continuous, penName, penEffect)
     {
         if (isValidPenScale(penScale))
             this->pendulumScale = penScale;
