@@ -202,13 +202,13 @@ public:
     {
         this->defense = newdefense;
     }
-    MonsterAttribute getMonsterAttribute() {
+    MonsterAttribute getMonsterAttribute() const {
         return this->attribute;
     }
     void setMonsterAttribute (const MonsterAttribute newAttribute) {
         this->attribute = newAttribute;
     }
-    MonsterType getMonsterType() {
+    MonsterType getMonsterType() const {
         return this->type;
     }
     void setMonsterType (const MonsterType newType) {
@@ -321,6 +321,12 @@ public:
     // Copy constructor -> no need because of no dyn memory
     // Operator = -> no need because of no dyn memory
     // Destructor -> no need becase of no dyn memory
+    int getPendulumScale() const {
+        return this->pendulumScale;
+    }
+    void setPendulumScale(const int newPenScale) {
+        this->pendulumScale = newPenScale;
+    }
     virtual PendulumCard *clone() const override
     {
         return new PendulumCard(*this);
