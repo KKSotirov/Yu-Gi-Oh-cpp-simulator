@@ -342,6 +342,7 @@ private:
     Card **Graveyard;
     int count;
     int capacity = 2;
+    SpellCard* fieldSpell;
 
     // Release all dynamically allocated resources
     void free()
@@ -358,6 +359,7 @@ private:
             delete Graveyard[i];
             Graveyard[i] = nullptr;
         }
+        delete fieldSpell;
         delete[] Graveyard;
         Graveyard = nullptr;
         count = 0;
@@ -392,11 +394,12 @@ private:
             this->monsterZones[i] = other.monsterZones[i] ? other.monsterZones[i]->clone() : nullptr;
             this->backrowZones[i] = other.backrowZones[i] ? other.backrowZones[i]->clone() : nullptr;
         }
+        this->fieldSpell = other.fieldSpell ? other.fieldSpell->clone() : nullptr;
     }
 
 public:
     // Defaut Constructor
-    DuelBoard() : count(0), capacity(2)
+    DuelBoard() : count(0), capacity(2), fieldSpell(nullptr)
     {
         Graveyard = new Card *[capacity]; // Initial graveyard allocation
         for (size_t i = 0; i < 5; i++)
@@ -406,7 +409,7 @@ public:
         }
     }
     // Par Constructor
-    DuelBoard(const int otherCount, const int otherCapacity, const MonsterCard *otherMonsterZones[5], const Card *otherBackrowZones[5], const Card **otherGraveyard) : count(otherCount), capacity(otherCapacity)
+    DuelBoard(const int otherCount, const int otherCapacity, const MonsterCard *otherMonsterZones[5], const Card *otherBackrowZones[5], const Card **otherGraveyard, const SpellCard* newFieldSpell) : count(otherCount), capacity(otherCapacity)
     {
         // Allocate and clone to ensure deep copy
         for (size_t i = 0; i < 5; i++)
@@ -419,6 +422,7 @@ public:
         {
             this->Graveyard[i] = otherGraveyard[i] ? otherGraveyard[i]->clone() : nullptr;
         }
+        this->fieldSpell = newFieldSpell ? newFieldSpell->clone() : nullptr;
     }
     // Copy Constructor
     DuelBoard(const DuelBoard &other)
@@ -496,6 +500,15 @@ public:
         // CASE 3~~> SPELL CARD
         if (SpellCard *spell = dynamic_cast<SpellCard *>(card))
         {
+            if(spell->getType() == SpellType::Field) {
+                if(this->fieldSpell != nullptr) {
+                    if(count >= capacity) resize();
+                    Graveyard[count++] = this->fieldSpell;
+                    this->fieldSpell = nullptr;
+                }
+                    this->fieldSpell = spell->clone();
+                    return;
+            }
             if (spell->getType() == SpellType::Continuous || spell->getType() == SpellType::Equip)
             {
                 for (size_t i = 0; i < 5; i++)
